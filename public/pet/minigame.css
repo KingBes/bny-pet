@@ -1,0 +1,127 @@
+/* ============================================================
+ * bnyPet 桌宠 - 「接食物」小游戏弹层样式
+ * 复用 pet.css 的 .modal-mask / .modal / .modal-title / .modal-body /
+ * .modal-close / .btn 等公共 class，这里只补充小游戏特有布局。
+ * 风格：温柔圆角 + 奶油色系，与 pet.css 保持一致。
+ * ============================================================ */
+
+/* 弹层容器：相对定位，让关闭按钮贴到右上角 */
+.mini-modal {
+    position: relative;
+    max-width: 352px;
+}
+
+/* 标题栏为关闭按钮留出空间 */
+.mini-modal .modal-title {
+    padding-right: 36px;
+}
+
+/* 弹层正文：紧凑纵向排布 */
+.mini-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ---------- 顶部信息（倒计时 / 得分） ---------- */
+.mini-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #fff6e2;
+    border: 1px solid #f0dcb4;
+    font-size: 12px;
+    color: #8a7050;
+}
+
+.mini-hud-item {
+    white-space: nowrap;
+}
+
+.mini-hud b {
+    color: #7a4f2b;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 画布舞台 ---------- */
+.mini-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 30%, #ffffff 0%, #fbf0da 70%, #f6e6c8 100%);
+    border: 1px solid #f0e2c6;
+}
+
+#mini-canvas {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    border-radius: 10px;
+    background: #fffaf0;
+    border: 1px solid #f0dcb4;
+    touch-action: none; /* 触摸拖动时禁止页面滚动 / 缩放 */
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* ---------- 结算区 ---------- */
+.mini-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 12px;
+    background: #fffaf0;
+    border: 1px solid #f0e2c6;
+    animation: bubble-in 0.2s ease-out;
+}
+
+.mini-result-text {
+    font-size: 13px;
+    color: #7a4f2b;
+}
+
+.mini-result-text b {
+    color: #d98a1f;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+}
+
+.mini-result .btn {
+    width: 100%;
+}
+
+/* ---------- 操作提示 ---------- */
+.mini-tip {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #9a8261;
+    text-align: center;
+}
+
+/* ---------- 底部开始按钮 ---------- */
+.mini-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.mini-actions .btn {
+    flex: 1 1 0;
+    padding: 9px 0;
+    font-size: 13px;
+    border-radius: 12px;
+}
+
+/* 结算按钮稍作强调 */
+.mini-result .btn.primary {
+    padding: 9px 0;
+    font-size: 13px;
+}

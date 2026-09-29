@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <!-- 固定浅色配色，避免深色模式下 Chromium 把画布底绘制成黑色 -->
+    <meta name="color-scheme" content="light">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>bnyPet 桌宠</title>
+    <!-- 页面基础样式 -->
+    <link rel="stylesheet" href="/pet/pet.css">
+    <!-- 商店 / 图鉴弹层样式（由 shop 模块维护） -->
+    <link rel="stylesheet" href="/pet/shop.css">
+    <!-- 小游戏样式（由 minigame 模块维护） -->
+    <link rel="stylesheet" href="/pet/minigame.css">
+</head>
+<body>
+<div id="pet-app" class="pet-app">
+
+    <!-- 顶部信息栏：宠物名 + 金币 -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <span class="icon" data-asset-key="ui_name" aria-hidden="true"></span>
+            <span id="pet-name" class="pet-name">小bny</span>
+        </div>
+        <div class="topbar-right">
+            <span class="icon" data-asset-key="ui_coin" aria-hidden="true"></span>
+            <span id="pet-coins" class="pet-coins">0</span>
+        </div>
+    </header>
+
+    <!-- 状态区：饱食度 / 心情 / 体力 + 等级与形态 -->
+    <section id="pet-stats" class="stats">
+        <div class="stat-head">
+            <span class="stat-head-item">等级 <b id="pet-level">1</b></span>
+            <span class="stat-head-item">形态 <b id="pet-stage-name">幼生期</b></span>
+        </div>
+
+        <div class="stat-row" id="stat-row-hunger">
+            <span class="icon" data-asset-key="ui_hunger" aria-hidden="true"></span>
+            <div class="bar">
+                <div class="bar-fill" id="stat-hunger"></div>
+            </div>
+            <span class="stat-value">0</span>
+        </div>
+
+        <div class="stat-row" id="stat-row-mood">
+            <span class="icon" data-asset-key="ui_mood" aria-hidden="true"></span>
+            <div class="bar">
+                <div class="bar-fill" id="stat-mood"></div>
+            </div>
+            <span class="stat-value">0</span>
+        </div>
+
+        <div class="stat-row" id="stat-row-energy">
+            <span class="icon" data-asset-key="ui_energy" aria-hidden="true"></span>
+            <div class="bar">
+                <div class="bar-fill" id="stat-energy"></div>
+            </div>
+            <span class="stat-value">0</span>
+        </div>
+
+        <!-- 经验区 -->
+        <div class="exp-row">
+            <div class="bar" id="pet-exp-bar">
+                <div class="bar-fill"></div>
+            </div>
+            <span id="pet-exp-text" class="exp-text">还需 0 经验升级</span>
+        </div>
+    </section>
+
+    <!-- 桌面模式拖动条（默认隐藏，仅 html.is-desktop 下显示） -->
+    <div id="pet-dragbar" aria-hidden="true"></div>
+
+    <!-- 舞台区：Canvas 宠物 + 事件气泡 -->
+    <section class="stage">
+        <canvas id="pet-stage" width="360" height="220" class="pet-canvas"></canvas>
+        <div id="pet-bubble" class="bubble hidden"></div>
+    </section>
+
+    <!-- 动作区：喂养 / 抚摸 / 陪玩 / 睡觉 -->
+    <section id="pet-actions" class="actions">
+        <button type="button" class="btn primary" data-action="feed">喂养</button>
+        <button type="button" class="btn" data-action="pet">抚摸</button>
+        <button type="button" class="btn" data-action="play">陪玩</button>
+        <button type="button" class="btn" data-action="sleep">睡觉</button>
+    </section>
+
+    <!-- 工具栏：商店 / 图鉴 / 小游戏 / 隐藏到托盘 / 静音 -->
+    <footer id="pet-toolbar" class="toolbar">
+        <button type="button" class="btn tool" id="btn-shop">商店</button>
+        <button type="button" class="btn tool" id="btn-codex">图鉴</button>
+        <button type="button" class="btn tool" id="btn-minigame">小游戏</button>
+        <button type="button" class="btn tool" id="btn-hide">隐藏到托盘</button>
+        <button type="button" class="btn tool" id="btn-mute" aria-pressed="false">静音</button>
+    </footer>
+
+    <!-- 商店 / 图鉴 / 小游戏弹层挂载点 -->
+    <div id="pet-modal-root"></div>
+</div>
+
+<!-- 素材占位层（Task 7 会整体替换） -->
+<script src="/pet/assets.js"></script>
+<!-- wasm 加载层（由其它子任务实现） -->
+<script src="/pet/wasm.js"></script>
+<!-- 游戏核心模块 -->
+<script src="/pet/pet.js"></script>
+<!-- 商店 / 图鉴模块 -->
+<script src="/pet/shop.js"></script>
+<!-- 小游戏模块 -->
+<script src="/pet/minigame.js"></script>
+</body>
+</html>
