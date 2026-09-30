@@ -60,7 +60,8 @@
                 <img id="petImg" src="/assets/bny/body.gif" alt="bny" draggable="false">
                 <!-- 菜单开关：本体右下角 -->
                 <button id="menuToggle" title="菜单" aria-label="菜单">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                        stroke-linecap="round">
                         <path d="M12 6v12M6 12h12" />
                     </svg>
                 </button>
@@ -172,6 +173,100 @@
                 return null;
             }
         }
+
+        (function () {
+            'use strict';
+
+            const THROTTLE_DELAY = 100;
+
+            let timer = null;
+            let lastX = 0;
+            let lastY = 0;
+
+            /* ---------- 标签表 ---------- */
+            // 穿透的终点：根标签永远不算空元素
+            const ROOT_TAGS = new Set(['HTML', 'BODY']);
+
+            // 功能性 / 媒体 / 交互元素：没有文字也算"有内容"
+            const CONTENT_TAGS = new Set([
+                'IMG', 'INPUT', 'TEXTAREA', 'SELECT', 'OPTION', 'BUTTON', 'A', 'LABEL',
+                'VIDEO', 'AUDIO', 'CANVAS', 'IFRAME', 'SVG', 'MATH', 'PICTURE', 'SOURCE',
+                'TRACK', 'HR', 'BR', 'PROGRESS', 'METER', 'OBJECT', 'EMBED', 'MAP', 'AREA'
+            ]);
+
+            // 不承载可视内容，直接当空气
+            const IGNORE_TAGS = new Set([
+                'HEAD', 'SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE', 'META', 'LINK', 'TITLE', 'SECTION', "MAIN"
+            ]);
+
+            // SVG / MathML 的 tagName 大小写不统一，先转大写再比较
+            function tagOf(el) {
+                return (el.tagName || '').toUpperCase();
+            }
+
+            // 是否真的被渲染（display:none / visibility:hidden 的子树不算内容）
+            function isRendered(el) {
+                return typeof el.checkVisibility !== 'function'
+                    ? true
+                    : el.checkVisibility({ checkVisibilityCSS: true });
+            }
+
+            // 【核心】递归判断：这棵子树里有没有真正的可视内容
+            function hasContent(el) {
+                if (!el || el.nodeType !== Node.ELEMENT_NODE) return false;
+
+                const tag = tagOf(el);
+                if (ROOT_TAGS.has(tag) || CONTENT_TAGS.has(tag)) return true;
+                if (IGNORE_TAGS.has(tag) || !isRendered(el)) return false;
+
+                // innerText 会忽略 display:none 的文本，比 textContent 更贴近"视觉空白"
+                const text = (typeof el.innerText === 'string' ? el.innerText : el.textContent) || '';
+                if (text.trim() !== '') return true;
+
+                for (let i = 0; i < el.children.length; i++) {
+                    if (hasContent(el.children[i])) return true;
+                }
+                return false;
+            }
+
+            function isEmptyElement(el) {
+                return !hasContent(el);
+            }
+
+            // 【核心】向上穿透所有空元素，找到最终的"有效元素"
+            function getRealTarget(el) {
+                let current = el;
+                while (current && !ROOT_TAGS.has(tagOf(current)) && isEmptyElement(current)) {
+                    current = current.parentElement;
+                }
+                return current || document.body;
+            }
+
+            function checkBlank(x, y) {
+                const originTarget = document.elementFromPoint(x, y);
+                if (!originTarget) return; // 坐标在视口外等情况，直接忽略
+
+                const realTarget = getRealTarget(originTarget);
+                const isBlank =
+                    realTarget === document.documentElement || realTarget === document.body;
+
+                // console.log(isBlank ? '在空白处' : '非空白处', realTarget);
+                clickThrough(isBlank);
+            }
+
+            // 节流：每次都更新坐标，只在定时器到点时用"最新坐标"做一次判断
+            document.addEventListener('mousemove', function (e) {
+                lastX = e.clientX;
+                lastY = e.clientY;
+                if (timer) return;
+
+                timer = setTimeout(function () {
+                    timer = null; // 先复位，避免回调抛异常时节流锁死
+                    checkBlank(lastX, lastY);
+                }, THROTTLE_DELAY);
+            }, { passive: true });
+        })();
+
 
         const panelInfo = document.querySelector('.panel-info'); // 信息面板
         const box = document.getElementById('petImg'); // 宠物本体
