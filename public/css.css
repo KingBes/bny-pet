@@ -1,0 +1,306 @@
+:root {
+    --bg: #FBF6EF;
+    --card: #FFFFFF;
+    --line: #F0E7DC;
+    --ink: #4A423E;
+    --ink-2: #7A6E67;
+    --muted: #A79B92;
+    --pink: #FF8FB1;
+    --amber: #FFC46B;
+    --mint: #7DD8C1;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: transparent;
+    color: var(--ink);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------- 主体 ---------- */
+main {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding: 12px 14px 14px;
+}
+
+/* ---------- 面板信息（悬浮层，不占布局，避免宠物被挤动） ---------- */
+.panel-info {
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    width: 240px;
+    max-width: 240px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: none;
+}
+
+
+.pi-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.pet-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.lv {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--pink);
+    background: #FFE9F0;
+    padding: 2px 7px;
+    border-radius: 999px;
+}
+
+.pi-status {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.stat-label {
+    width: 34px;
+    font-size: 12px;
+    color: var(--ink-2);
+}
+
+.bar {
+    flex: 1;
+    height: 8px;
+    background: #F6EFE7;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width .35s ease;
+}
+
+.s-hunger {
+    background: var(--amber);
+}
+
+.s-mood {
+    background: var(--pink);
+}
+
+.s-energy {
+    background: var(--mint);
+}
+
+.stat-val {
+    width: 30px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.pi-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 9px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.pi-foot .bar {
+    height: 5px;
+}
+
+.s-exp {
+    background: #6B5E58;
+}
+
+.pi-foot .num {
+    font-variant-numeric: tabular-nums;
+}
+
+.pi-foot .sep {
+    width: 1px;
+    height: 10px;
+    background: var(--line);
+}
+
+.pi-foot b {
+    color: var(--ink-2);
+    font-weight: 600;
+}
+
+/* ---------- 宠物区 ---------- */
+.stage {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#petImg {
+    position: relative;
+    width: 142px;
+    height: auto;
+    cursor: grab;
+    transition: transform .2s ease;
+}
+
+#petImg:active {
+    cursor: grabbing;
+}
+
+.pet-wrap {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+
+/* 菜单开关：本体右下角小圆钮 */
+#menuToggle {
+    position: absolute;
+    right: 15px;
+    bottom: 0px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--card);
+    color: var(--ink-2);
+    box-shadow: 0 2px 6px rgba(74, 66, 62, .12);
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s, transform .2s;
+}
+
+#menuToggle:hover {
+    border-color: #FFB9CD;
+    color: var(--pink);
+}
+
+#menuToggle.active {
+    background: var(--pink);
+    border-color: var(--pink);
+    color: #fff;
+    transform: rotate(45deg);
+}
+
+#menuToggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ---------- 菜单（钉在底部的独立层：开合不挤动宠物，宠物保持窗口居中） ---------- */
+.menus {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.menus.show {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+}
+
+.menu {
+    height: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+
+.menu:hover {
+    border-color: #FFB9CD;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(255, 143, 177, .14);
+}
+
+.menu:active {
+    transform: scale(.97);
+}
+
+.menu svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ---------- 轻提示 ---------- */
+#toast {
+    position: fixed;
+    left: 50%;
+    bottom: 140px;
+    transform: translate(-50%, 8px);
+    background: var(--ink);
+    color: #FFF9F2;
+    font-size: 12px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s, transform .25s;
+    z-index: 9;
+}
+
+#toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <!-- 固定浅色，避免深色模式下把页面底色画成黑色 -->
+    <meta name="color-scheme" content="light">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <title>BnyPet 兔子桌宠</title>
+    <link rel="stylesheet" href="/css.css">
+</head>
+
+<body>
+    <main>
+        <!-- 面板信息 -->
+        <section class="panel-info">
+            <div class="pi-head">
+                <span class="pet-name" id="petName">小bny</span>
+                <span class="lv" id="petLv">Lv.1</span>
+                <span class="pi-status" id="petStatus">幼生期 · 心情不错</span>
+            </div>
+
+            <div class="stat">
+                <span class="stat-label">饱食</span>
+                <div class="bar">
+                    <div class="bar-fill s-hunger" id="barHunger"></div>
+                </div>
+                <span class="stat-val" id="valHunger">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">心情</span>
+                <div class="bar">
+                    <div class="bar-fill s-mood" id="barMood"></div>
+                </div>
+                <span class="stat-val" id="valMood">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">体力</span>
+                <div class="bar">
+                    <div class="bar-fill s-energy" id="barEnergy"></div>
+                </div>
+                <span class="stat-val" id="valEnergy">0</span>
+            </div>
+
+            <div class="pi-foot">
+                <span>经验</span>
+                <div class="bar">
+                    <div class="bar-fill s-exp" id="barExp"></div>
+                </div>
+                <span class="num" id="valExp">0/100</span>
+                <span class="sep"></span>
+                <span>金币 <b id="valCoins">0</b></span>
+            </div>
+        </section>
+
+        <!-- 宠物区 -->
+        <section class="stage">
+            <div class="pet-wrap">
+                <img id="petImg" src="/assets/bny/body.gif" alt="bny" draggable="false">
+                <!-- 菜单开关：本体右下角 -->
+                <button id="menuToggle" title="菜单" aria-label="菜单">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                        <path d="M12 6v12M6 12h12" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- 菜单 -->
+        <nav class="menus" id="menus">
+            <button class="menu" data-action="feed">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M4 11h16a8 8 0 0 1-16 0Z" />
+                    <path d="M9.5 8c0-1.3 1.2-1.3 1.2-2.6M14 8c0-1.3 1.2-1.3 1.2-2.6" />
+                </svg>
+                喂食
+            </button>
+            <button class="menu" data-action="play">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="8" />
+                    <path d="M12 4c-2.5 2.2-2.5 13.8 0 16M12 4c2.5 2.2 2.5 13.8 0 16" />
+                </svg>
+                玩耍
+            </button>
+            <button class="menu" data-action="rest">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" />
+                </svg>
+                休息
+            </button>
+            <button class="menu" data-action="shop">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M5.5 8h13l-1.2 12H6.7L5.5 8Z" />
+                    <path d="M9 8a3 3 0 0 1 6 0" />
+                </svg>
+                商店
+            </button>
+            <button class="menu" data-action="codex">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path
+                        d="M12 6.5C10.2 5 7.6 4.5 4.5 4.5v13c3.1 0 5.7.5 7.5 2 1.8-1.5 4.4-2 7.5-2v-13c-3.1 0-5.7.5-7.5 2Z" />
+                    <path d="M12 6.5v13" />
+                </svg>
+                图鉴
+            </button>
+            <button class="menu" data-action="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M4 9h8M17 9h3M4 15h4M13 15h7" />
+                    <circle cx="14.5" cy="9" r="2.2" />
+                    <circle cx="10.5" cy="15" r="2.2" />
+                </svg>
+                设置
+            </button>
+        </nav>
+    </main>
+
+    <div id="toast"></div>
+
+    <script>
+        // ---------- 状态占位：后续由存档 / PHP 喂入真实数据 ----------
+        const state = {
+            name: '小bny',
+            level: 1,
+            stage: '幼生期',
+            hunger: 72,
+            mood: 86,
+            energy: 64,
+            exp: 12,
+            expMax: 100,
+            coins: 0,
+        };
+
+        function render() {
+            const $ = (id) => document.getElementById(id);
+            $('petName').textContent = state.name;
+            $('petLv').textContent = 'Lv.' + state.level;
+            $('petStatus').textContent = state.stage + ' · ' + moodText(state.mood);
+            $('barHunger').style.width = state.hunger + '%';
+            $('barMood').style.width = state.mood + '%';
+            $('barEnergy').style.width = state.energy + '%';
+            $('valHunger').textContent = state.hunger;
+            $('valMood').textContent = state.mood;
+            $('valEnergy').textContent = state.energy;
+            $('barExp').style.width = Math.min(100, state.exp / state.expMax * 100) + '%';
+            $('valExp').textContent = state.exp + '/' + state.expMax;
+            $('valCoins').textContent = state.coins;
+        }
+
+        function moodText(mood) {
+            if (mood >= 80) return '心情不错';
+            if (mood >= 50) return '还算开心';
+            return '有点低落';
+        }
+
+        render();
+
+        // ---------- 桥接占位：函数不存在（浏览器预览）时静默跳过 ----------
+        function bridge(name, ...args) {
+            const fn = window[name];
+            if (typeof fn !== 'function') return null;
+            try {
+                return fn(...args);
+            } catch (err) {
+                console.warn('[bridge]', name, err);
+                return null;
+            }
+        }
+
+        const panelInfo = document.querySelector('.panel-info'); // 信息面板
+        const box = document.getElementById('petImg'); // 宠物本体
+        const menus = document.getElementById('menus'); // 菜单
+
+        // ---------- 点击 vs 拖动：移动超过阈值才发起原生拖动 ----------
+        // mousedown 立刻 tbBeginDrag 会让系统进入原生拖动模态循环，mouseup 被吞掉，
+        // click 永远不触发（菜单就打不开）。所以先记录，移动超阈值才拖。
+        let pressing = false;
+        let dragMoved = false;
+        let startX = 0;
+        let startY = 0;
+        const DRAG_THRESHOLD = 5;
+
+        box.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            pressing = true;
+            dragMoved = false;
+            startX = e.screenX;
+            startY = e.screenY;
+        });
+
+        box.addEventListener('mousemove', (e) => {
+            if (!pressing || dragMoved) return;
+            if (Math.abs(e.screenX - startX) < DRAG_THRESHOLD
+                && Math.abs(e.screenY - startY) < DRAG_THRESHOLD) {
+                return;
+            }
+            dragMoved = true;
+            pressing = false;
+            bridge('tbBeginDrag', e.screenX, e.screenY);
+        });
+
+        window.addEventListener('mouseup', () => { pressing = false; });
+        box.addEventListener('mouseleave', () => { pressing = false; });
+
+        // ---------- 显示面板：鼠标悬停宠物本体 ----------
+        box.addEventListener('mouseenter', () => {
+            panelInfo.style.display = 'block';
+        });
+        box.addEventListener('mouseleave', () => {
+            panelInfo.style.display = 'none';
+        });
+
+        // ---------- 显示菜单：宠物右下角小按钮 ----------
+        const menuToggle = document.getElementById('menuToggle');
+        menuToggle.addEventListener('click', () => {
+            menus.classList.toggle('show');
+            menuToggle.classList.toggle('active');
+        });
+
+        // ---------- 菜单（功能开发中，仅提示） ----------
+        document.getElementById('menus').addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            bridge('petAction', btn.dataset.action);
+            toast('「' + btn.textContent.trim() + '」功能开发中');
+        });
+
+        // ---------- 轻提示 ----------
+        let toastTimer = null;
+        function toast(text) {
+            const el = document.getElementById('toast');
+            el.textContent = text;
+            el.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
+        }
+    </script>
+</body>
+
+</html>
